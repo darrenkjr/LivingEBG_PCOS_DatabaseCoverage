@@ -10,3 +10,5 @@ This project is designed to retrieve and process scientific article data from va
    pip install -r requirements.txt
    ```
 3. Set up your API keys in a .env file (see .env.example for required keys)
+4. Run retrieve_articles.py to retrieve articles from the APIs
+5. Run analysis.ipynb to check analyses 
