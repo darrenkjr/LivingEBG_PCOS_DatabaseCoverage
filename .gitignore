@@ -1,0 +1,27 @@
+# Python-related
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# IDE-related
+.vscode/
+.idea/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Operating system-related
+.DS_Store
+Thumbs.db
+
+# Project-specific
+*.log
+*.xlsx
+*.xlsm
+*.ris
+_resources
