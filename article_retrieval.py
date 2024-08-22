@@ -1,6 +1,7 @@
 from api_interfaces.openalex import openalex_interface
 from api_interfaces.semanticscholar import semanticscholar_interface
 from api_interfaces.async_metapub_wrapper import async_metapub_wrapper
+from api_interfaces.scopus import scopus_interface 
 from dotenv import load_dotenv
 load_dotenv() 
 import pandas as pd 
@@ -8,7 +9,19 @@ import numpy as np
 import asyncio 
 import os 
 
-
+def process_api_results(df_results, api_name, writer):
+    overall_metrics = percentageretrieved_calc(df_results)
+    overall_metrics_df = pd.DataFrame([overall_metrics], index=['Overall'])
+    grouped_metrics = df_results.groupby('question_id').apply(percentageretrieved_calc).apply(pd.Series)
+    grouped_metrics_gdg = df_results.groupby('GDG').apply(percentageretrieved_calc).apply(pd.Series)
+    metrics_df = pd.concat([overall_metrics_df, grouped_metrics_gdg, grouped_metrics])
+    
+    df_results.to_excel(writer, sheet_name=f"api_results_{api_name}", index=False)
+    metrics_df.to_excel(writer, sheet_name=f"metrics_{api_name}", index=False)
+    api_fail_df = df_results[pd.isna(df_results['api_id_retrieved'])]
+    api_fail_df.to_excel(writer, sheet_name=f"unsucessful_retrieve_{api_name}", index=False)
+    
+    return df_results['pmid']
 
 def percentageretrieved_calc(df): 
     # Determine retrieval failures
@@ -53,7 +66,8 @@ def retrieve_ids(df, api_instance):
     df_copy = df.copy() 
     if isinstance(api_instance, async_metapub_wrapper): 
         retrieval_results = asyncio.run(api_instance.async_fetch_pubmed_articles(df_copy))
-
+    elif isinstance(api_instance, scopus_interface):
+        retrieval_results = asyncio.run(api_instance.retrieve_generic_paper_details(df_copy))
 
     # if not pubmed -> use custom openalex or semantic scholar interfaces 
     else: 
@@ -87,66 +101,8 @@ def retrieve_ids(df, api_instance):
     return retrieval_results, api_fail_df
 
 
-excel_path = '../PCOS_Guideline_Dataset.xlsm'
-df = pd.read_excel(excel_path, sheet_name="included_articles")
 
-#go through the id list 
-id_col = ['included_article_doi', 'included_article_pmid']
-#fill in oa id first 
-
-semanticscholar_api_key =  os.getenv('semantic_scholar_api_key')
-#initiate instances 
-oa_instance = openalex_interface() 
-ss_instance = semanticscholar_interface(semanticscholar_api_key)
-pubmed_instance = async_metapub_wrapper()
-
-file_path = 'api_retrieved.xlsx'
-
-
-with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
-
-    pmid_input_df = df.copy()
-    pmid_input_df['id_sent_apiretrieval'] = None
-    for api, api_name in zip([oa_instance,ss_instance], ['oa','ss']):
-        print(f'Retrieving ids from {api_name}')
-        df_results, api_fail_df = retrieve_ids(df, api)
-            # Calculate metrics for the entire DataFrame
-        overall_metrics = percentageretrieved_calc(df_results)
-        overall_metrics_df = pd.DataFrame([overall_metrics], index=['Overall'])
-
-        # # Calculate metrics for each group
-        grouped_metrics = df_results.groupby('question_id').apply(percentageretrieved_calc).apply(pd.Series)
-        grouped_metrics_gdg = df_results.groupby('GDG').apply(percentageretrieved_calc).apply(pd.Series)
-
-        # # Combine overall and grouped metrics
-        metrics_df = pd.concat([overall_metrics_df, grouped_metrics_gdg, grouped_metrics])
-        #write to excel worksheet 
-        df_results.to_excel(writer, sheet_name=f"api_results_{api_name}", index=False)
-        metrics_df.to_excel(writer, sheet_name=f"metrics_{api_name}", index=False)
-        api_fail_df.to_excel(writer, sheet_name = f"unsucessful_retrieve_{api_name}", index = False)
-
-        #extract pmid that were retrieved from openalex and semantic scholar - add to df to be verified later
-        pmid_input_df['id_sent_apiretrieval'] = pmid_input_df['id_sent_apiretrieval'].fillna(df_results['pmid'])
-    
-    #now, do pubmid 
-    print('Retrieving from PubMed API..')
-    api_name = 'pubmed'
-    pmid_input_df['id_sent_apiretrieval'] = pmid_input_df['id_sent_apiretrieval'].fillna(pmid_input_df['included_article_doi'])
-    pmid_input_df['id_sent_apiretrieval'] = pmid_input_df['id_sent_apiretrieval'].str.lower().str.replace(" ", "")
-    df_results, api_fail_df = retrieve_ids(pmid_input_df, pubmed_instance)
-    overall_metrics = percentageretrieved_calc(df_results)
-    overall_metrics_df = pd.DataFrame([overall_metrics], index=['Overall'])
-
-    # # Calculate metrics for each group
-    grouped_metrics = df_results.groupby('question_id').apply(percentageretrieved_calc).apply(pd.Series)
-    grouped_metrics_gdg = df_results.groupby('GDG').apply(percentageretrieved_calc).apply(pd.Series)
-
-    # # Combine overall and grouped metrics
-    metrics_df = pd.concat([overall_metrics_df, grouped_metrics_gdg, grouped_metrics])
-
-    df_results.to_excel(writer, sheet_name=f"api_results_{api_name}", index=False)
-    metrics_df.to_excel(writer, sheet_name=f"metrics_{api_name}", index=False)
-    api_fail_df.to_excel(writer, sheet_name = f"unsucessful_retrieve_{api_name}", index = False)
+        
 
     
 

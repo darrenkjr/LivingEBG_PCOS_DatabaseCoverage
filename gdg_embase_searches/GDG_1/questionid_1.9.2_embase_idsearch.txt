@@ -1,0 +1,5 @@
+GDG: 1
+questionid: 1.9.2
+Total Article Count: 6
+ID Search:
+("30710572".pm OR "23756702".pm OR "26202923".pm OR "21982282".pm OR "24707685".pm) OR ("10 1210 jendso bvab048 891".do OR "10 1093 humrep det255".do OR "10 1093 humrep dev166".do OR "10 1016 j fertnstert 2011 08 035".do OR "10 12891 ceog16312014".do)

@@ -16,7 +16,7 @@ class async_metapub_wrapper:
         self.api_instance = PubMedFetcher()
         #api limits are set at rps 
         self.api_limit = 9
-        self.pubmed_result_col = ['api_id_retrieved', 'title', 'abstract', 'publication_year', 'venue', 'doi', 'mesh_headings', 'authors', 'url']
+        self.pubmed_result_col = ['api_id_retrieved', 'title', 'abstract', 'publication_year', 'venue', 'doi', 'mesh_headings', 'authors', 'url', 'pmid']
         self.none_result_placeholder = (None,)*len(self.pubmed_result_col)
 
     async def async_fetch_pubmed_articles(self, df):
@@ -35,7 +35,7 @@ class async_metapub_wrapper:
         #do processing 
         for pub in retrieval_results_list: 
             if pub is not None: 
-                pubmed_api_data = (pub.pmid, pub.title, pub.abstract, pub.year, pub.journal, pub.doi, pub.mesh, pub.authors, pub.url)
+                pubmed_api_data = (pub.pmid, pub.title, pub.abstract, pub.year, pub.journal, pub.doi, pub.mesh, pub.authors, pub.url, pub.pmid)
             else: 
                 pubmed_api_data = self.none_result_placeholder
             pubmed_result_list.append(pubmed_api_data)
