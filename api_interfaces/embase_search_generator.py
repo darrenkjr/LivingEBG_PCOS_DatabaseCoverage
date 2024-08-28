@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import re
+import numpy as np
 
 def process_pmid(pmid):
     # Remove 'pmid:' prefix and any leading/trailing whitespace
@@ -91,6 +92,12 @@ embase_ids_sent['original_index'] = embase_ids_sent.index
 embase_ids_sent = pd.merge(embase_ids_sent, ids_sent, on=['GDG','question_id','original_index'], how='left')
 #drop the original_index column
 embase_ids_sent.drop(columns=['original_index'], inplace=True)
+#fill in title_search_sent with reference of articles, where doi_sent or pmid_sent are empty
+embase_ids_sent['title_search_sent'] = np.where(
+    (embase_ids_sent['doi_sent'].isna()) & (embase_ids_sent['pmid_sent'].isna()),
+    embase_ids_sent['included_reference'],
+    ''
+)
 embase_ids_sent.to_csv(os.path.join(output_dir, 'embase_ids_sent.csv'), index=False)
 
 print(f"ID search files have been organized into GDG-specific folders within the '{output_dir}' directory.")

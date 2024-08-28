@@ -37,4 +37,8 @@ with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
         input_df['id_sent_apiretrieval'] = input_df['id_sent_apiretrieval'].fillna(input_df['included_article_doi'])
         input_df['id_sent_apiretrieval'] = input_df['id_sent_apiretrieval'].str.lower().str.replace(" ", "")
         df_results, _ = retrieve_ids(input_df, api)
-        retrieved_pmids = process_api_results(df_results, api_name, writer)
+
+        #implement title only search - on the ones that failed 
+
+        #placecholder varialbe as we are not using this output 
+        _ = process_api_results(df_results, api_name, writer)

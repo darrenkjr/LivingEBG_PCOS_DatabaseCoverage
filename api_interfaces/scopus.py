@@ -87,13 +87,15 @@ class scopus_interface:
 
         # Process results and update the DataFrame
         for result in results:
+            #dummy matching row 
+            matching_row = []
             if result:
                 matching_row = df[df['id_sent_apiretrieval'] == result['doi']].index
-            if len(matching_rows) == 0 and result.get('pmid'):
-                        matching_rows = df[df['id_sent_apiretrieval'] == f"pmid:{result['pmid']}"].index
-            if len(matching_row) > 0:
-                for key, value in result.items():
-                    df.at[matching_row[0], key] = value
+                if len(matching_row) == 0 and result.get('pmid'):
+                    matching_row = df[df['id_sent_apiretrieval'] == f"pmid:{result['pmid']}"].index
+                if len(matching_row) > 0:
+                    for key, value in result.items():
+                        df.at[matching_row[0], key] = value
 
         return df
 
