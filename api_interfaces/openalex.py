@@ -20,7 +20,7 @@ class openalex_interface:
     def __init__(self): 
 
         self.api_limit = AsyncLimiter(3,1)
-        self.api_fields = ['id','title','publication_year', 'ids', 'referenced_works', 'referenced_works_count', 'type','abstract_inverted_index', 'cited_by_api_url', 'cited_by_count', 'topics']
+        self.api_fields = ['id','title','publication_year', 'ids', 'referenced_works', 'referenced_works_count', 'type','abstract_inverted_index', 'cited_by_api_url', 'cited_by_count', 'topics', 'open_access', 'best_oa_location', 'biblio', 'primary_location']
         self.api_fields_str = ','.join(self.api_fields)
         self.pagination_limit = 200
         self.default_cursor = '*'
@@ -601,7 +601,25 @@ class openalex_interface:
             else row['referenced_works_count'], 
             axis=1)
         
+        #unpack locations object 
+        final_df = [['source_display_name', 'source_id']] = final_df['primary_location'].apply(extract_source_info)
+        
         return final_df
+    
+def extract_source_info(primary_location):
+    if not isinstance(primary_location, dict) or 'source' not in primary_location:
+        return pd.Series({'source_display_name': None, 'source_issn_l': None, 'source_id': None})
+    
+    source = primary_location['source']
+
+    if not isinstance(source, dict):
+        return pd.Series({'source_display_name': None, 'source_issn_l': None, 'source_id': None})
+    
+    return pd.Series({
+        'source_display_name': source.get('display_name', None),
+        'source_id': source.get('id', None)
+    })
+
     
 
     def to_ris(self, df):

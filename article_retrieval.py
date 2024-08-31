@@ -32,6 +32,7 @@ def percentageretrieved_calc(df):
 
     # Filter the dataframe to exclude zero `included_postfulltext`
     df_nonzero_review = df[df['included_postfulltext'] != 0]
+    df_pri_citations_only = df_nonzero_review[df_nonzero_review['same_study_diff_article'] == "primary_citation"]
     num_included_articles = df_nonzero_review.shape[0]
 
     # Count number of input IDs sent for retrieval
@@ -45,27 +46,33 @@ def percentageretrieved_calc(df):
     
     # Calculate percentages
     if num_input_ids_retrievalsent > 0:
-        percentage_retrieved = ((df['api_retrieval_success'].sum()) / num_input_ids_retrievalsent) * 100
+        percentage_retrieved = ((df_nonzero_review['api_retrieval_success'].sum()) / num_input_ids_retrievalsent) * 100
     else:
         percentage_retrieved = 0
 
     if num_included_articles > 0:
-        percentage_retrieved_overall = ((df['api_retrieval_success'].sum()) / num_included_articles) * 100
+        percentage_retrieved_overall = ((df_nonzero_review['api_retrieval_success'].sum()) / num_included_articles) * 100
+        
+        num_included_articles_pri_citations_only = df_pri_citations_only.shape[0]
+        percentage_pri_citations_only = ((df_pri_citations_only['api_retrieval_success'].sum()) / num_included_articles_pri_citations_only) * 100
     else:
         percentage_retrieved_overall = 0
+        percentage_pri_citations_only = 0
+    
 
     return {
         'num_input_ids_retrievalsent': num_input_ids_retrievalsent,
         'num_included_articles': num_included_articles,
         'percentage_retrieved': percentage_retrieved,
-        'percentage_retrieved_overall': percentage_retrieved_overall
+        'percentage_retrieved_overall': percentage_retrieved_overall,
+        'percentage_retrieved_pri_citations_only': percentage_pri_citations_only
     }
 
 
 def retrieve_ids(df, api_instance): 
     df_copy = df.copy() 
     if isinstance(api_instance, async_metapub_wrapper): 
-        retrieval_results = asyncio.run(api_instance.async_fetch_pubmed_articles(df_copy))
+        retrieval_results = asyncio.run(api_instance.async_fetch_pubmed_articles(df_copy, title_search_flag=False))
     elif isinstance(api_instance, scopus_interface):
         retrieval_results = asyncio.run(api_instance.retrieve_generic_paper_details(df_copy))
 
@@ -82,15 +89,16 @@ def retrieve_ids(df, api_instance):
         dupe_check_col = retrieval_results.columns[:8]
         duplicate_rows = retrieval_results[retrieval_results.duplicated(subset=dupe_check_col, keep=False)]
         retrieval_results = retrieval_results.drop(duplicate_rows.index)
-        try:
+        if 'citation_network_size' in duplicate_rows.columns:
+            #find the row with highest citaiton network size 
+            grouped_duplicates = duplicate_rows.groupby(['included_article_id'])
+            #sort by citation network size  and pick the first 
+            rows_to_keep = grouped_duplicates.apply(lambda x: x.sort_values('citation_network_size', ascending=False).iloc[0])
+        else:
+            # Fallback if 'citation_network_size' doesn't exist
             rows_to_keep = duplicate_rows.loc[
-                duplicate_rows.groupby(list(dupe_check_col))['citation_network_size'].idxmax()
-        ]
-        except KeyError: 
-            #if doing by citation network size is not possible - just get the first row 
-            rows_to_keep = duplicate_rows.loc[
-                duplicate_rows.groupby(list(dupe_check_col)).head(1).index
-        ]
+                duplicate_rows.groupby(list(dupe_check_col)).first().index
+            ]
         # Add back the rows with the highest citation_network_size
         retrieval_results = pd.concat([retrieval_results, rows_to_keep]).sort_index()
         #check shape again 

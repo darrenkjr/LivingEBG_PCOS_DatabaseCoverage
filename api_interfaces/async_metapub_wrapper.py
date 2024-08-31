@@ -19,27 +19,46 @@ class async_metapub_wrapper:
         self.pubmed_result_col = ['api_id_retrieved', 'title', 'abstract', 'publication_year', 'venue', 'doi', 'mesh_headings', 'authors', 'url', 'pmid']
         self.none_result_placeholder = (None,)*len(self.pubmed_result_col)
 
-    async def async_fetch_pubmed_articles(self, df):
+    async def async_fetch_pubmed_articles(self, df, title_search_flag):
         
         #preserve original index 
         df = df.reset_index(drop=False)
 
 
-        with ThreadPoolExecutor(max_workers = self.api_limit) as executor: 
-            tasks = [
-                self.task_executor(id, executor) for id in df['id_sent_apiretrieval'].to_list()
-            ]
+        with ThreadPoolExecutor(max_workers = self.api_limit) as executor:
+
+            if title_search_flag: 
+                id_col = 'title_sent'
+            elif title_search_flag == False: 
+                id_col = 'id_sent_apiretrieval'
+            
+            id_list = df[id_col].to_list()
+            tasks = [self.task_executor(id, executor) for id in id_list]
             retrieval_results_list = await tqdm.gather(*tasks)
 
         pubmed_result_list = []
         #do processing 
         for pub in retrieval_results_list: 
-            if pub is not None: 
-                pubmed_api_data = (pub.pmid, pub.title, pub.abstract, pub.year, pub.journal, pub.doi, pub.mesh, pub.authors, pub.url, pub.pmid)
-            else: 
-                pubmed_api_data = self.none_result_placeholder
+            #handle results from title search 
+            if title_search_flag:
+                if isinstance(pub, list): 
+                    pubmed_api_data = pub 
+                else: 
+                    pubmed_api_data = [pub]
+
+            elif title_search_flag == False:
+                if pub is not None: 
+                    pubmed_api_data = (pub.pmid, pub.title, pub.abstract, pub.year, pub.journal, pub.doi, pub.mesh, pub.authors, pub.url, pub.pmid)
+                else: 
+                    pubmed_api_data = self.none_result_placeholder
+
             pubmed_result_list.append(pubmed_api_data)
-        pubmed_result_df = pd.DataFrame(pubmed_result_list, columns = self.pubmed_result_col)
+
+        if title_search_flag: 
+            #pubmed result list at this point is a nested list of pmids - convert to pd series 
+            pubmed_result_df = pd.Series(pubmed_result_list, name = 'pmid_retrieved')
+        elif title_search_flag == False: 
+            pubmed_result_df = pd.DataFrame(pubmed_result_list, columns = self.pubmed_result_col)
 
         #merge back with original df 
         #concat to input df 
@@ -58,8 +77,19 @@ class async_metapub_wrapper:
                         return self.api_instance.article_by_pmid(id.strip('pmid:'))
                     elif id.startswith('10.'):
                         return self.api_instance.article_by_doi(id)
-                    else: 
+                    elif id.startswith('no_id_provided'):
                         return None
+                    elif id is None: 
+                        return None
+                    else: 
+                        query = f'title:"{id}"'
+                        #this will return a list of pmids
+                        try:  
+                            return self.api_instance.pmids_for_query(query, retmax = 5)
+                        except Exception as e: 
+                            print(e)
+                            #return empty list 
+                            return []
                 else: 
                     return None
             except InvalidPMID as e: 
