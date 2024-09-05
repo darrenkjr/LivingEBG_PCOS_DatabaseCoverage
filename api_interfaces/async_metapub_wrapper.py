@@ -15,7 +15,7 @@ class async_metapub_wrapper:
     def __init__(self): 
         self.api_instance = PubMedFetcher()
         #api limits are set at rps 
-        self.api_limit = 9
+        self.api_limit = 3
         self.pubmed_result_col = ['api_id_retrieved', 'title', 'abstract', 'publication_year', 'venue', 'doi', 'mesh_headings', 'authors', 'url', 'pmid']
         self.none_result_placeholder = (None,)*len(self.pubmed_result_col)
 
@@ -74,22 +74,13 @@ class async_metapub_wrapper:
             try: 
                 if isinstance(id, str):  
                     if id.startswith('pmid:'):
-                        return self.api_instance.article_by_pmid(id.strip('pmid:'))
+                        return self.api_instance.article_by_pmid(id.strip('pmid:').strip())
                     elif id.startswith('10.'):
-                        return self.api_instance.article_by_doi(id)
+                        return self.api_instance.article_by_doi(id.strip())
                     elif id.startswith('no_id_provided'):
                         return None
                     elif id is None: 
                         return None
-                    else: 
-                        query = f'title:"{id}"'
-                        #this will return a list of pmids
-                        try:  
-                            return self.api_instance.pmids_for_query(query, retmax = 5)
-                        except Exception as e: 
-                            print(e)
-                            #return empty list 
-                            return []
                 else: 
                     return None
             except InvalidPMID as e: 

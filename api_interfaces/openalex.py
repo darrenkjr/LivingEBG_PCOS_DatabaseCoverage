@@ -602,25 +602,25 @@ class openalex_interface:
             axis=1)
         
         #unpack locations object 
-        final_df = [['source_display_name', 'source_id']] = final_df['primary_location'].apply(extract_source_info)
+        final_df[['source_display_name', 'source_id']] = final_df['primary_location'].apply(self.extract_source_info)
         
         return final_df
     
-def extract_source_info(primary_location):
-    if not isinstance(primary_location, dict) or 'source' not in primary_location:
-        return pd.Series({'source_display_name': None, 'source_issn_l': None, 'source_id': None})
-    
-    source = primary_location['source']
+    def extract_source_info(self, primary_location):
+        if not isinstance(primary_location, dict) or 'source' not in primary_location:
+            return pd.Series({'source_display_name': None,'source_id': None})
+        
+        source = primary_location['source']
 
-    if not isinstance(source, dict):
-        return pd.Series({'source_display_name': None, 'source_issn_l': None, 'source_id': None})
-    
-    return pd.Series({
-        'source_display_name': source.get('display_name', None),
-        'source_id': source.get('id', None)
-    })
+        if not isinstance(source, dict):
+            return pd.Series({'source_display_name': None,  'source_id': None})
+        
+        return pd.Series({
+            'source_display_name': source.get('display_name', None),
+            'source_id': source.get('id', None)
+        })
 
-    
+        
 
     def to_ris(self, df):
 

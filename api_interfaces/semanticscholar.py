@@ -22,8 +22,8 @@ class semanticscholar_interface:
         self.batch_limit = 500
         self.concurrent_requests = 2
         self.semaphore = asyncio.Semaphore(self.concurrent_requests)
-        self.api_limit = AsyncLimiter(9,1)
-        self.session_timeout = aiohttp.ClientTimeout(total=600)
+        self.api_limit = AsyncLimiter(3,1)
+        self.session_timeout = aiohttp.ClientTimeout(total=900)
         self.pagination_limit = 500
         self.default_pagination_offset = 0
         self.max_retries = 20

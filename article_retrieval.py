@@ -14,14 +14,26 @@ def process_api_results(df_results, api_name, writer):
     overall_metrics_df = pd.DataFrame([overall_metrics], index=['Overall'])
     grouped_metrics = df_results.groupby('question_id').apply(percentageretrieved_calc).apply(pd.Series)
     grouped_metrics_gdg = df_results.groupby('GDG').apply(percentageretrieved_calc).apply(pd.Series)
-    metrics_df = pd.concat([overall_metrics_df, grouped_metrics_gdg, grouped_metrics])
+    
+    # Reset index to include group names as columns
+    grouped_metrics = grouped_metrics.reset_index()
+    grouped_metrics_gdg = grouped_metrics_gdg.reset_index()
+    
+    # Rename the index columns to avoid confusion
+    grouped_metrics = grouped_metrics.rename(columns={'question_id': 'Group'})
+    grouped_metrics_gdg = grouped_metrics_gdg.rename(columns={'GDG': 'Group'})
+    
+    metrics_df = pd.concat([overall_metrics_df, grouped_metrics_gdg, grouped_metrics], ignore_index=True)
     
     df_results.to_excel(writer, sheet_name=f"api_results_{api_name}", index=False)
     metrics_df.to_excel(writer, sheet_name=f"metrics_{api_name}", index=False)
     api_fail_df = df_results[pd.isna(df_results['api_id_retrieved'])]
     api_fail_df.to_excel(writer, sheet_name=f"unsucessful_retrieve_{api_name}", index=False)
     
-    return df_results['pmid']
+    try: 
+        return df_results[['included_article_id', 'pmid', 'doi']]
+    except: 
+        return df_results
 
 def percentageretrieved_calc(df): 
     # Determine retrieval failures
@@ -35,20 +47,8 @@ def percentageretrieved_calc(df):
     df_pri_citations_only = df_nonzero_review[df_nonzero_review['same_study_diff_article'] == "primary_citation"]
     num_included_articles = df_nonzero_review.shape[0]
 
-    # Count number of input IDs sent for retrieval
-    num_input_ids_retrievalsent = df_nonzero_review[
-        (df_nonzero_review['included_postfulltext'] != 0) &
-        (df_nonzero_review['id_sent_apiretrieval'] != 'no_id_provided')
-    ].shape[0]
-
     # Count the number of included articles
     
-    
-    # Calculate percentages
-    if num_input_ids_retrievalsent > 0:
-        percentage_retrieved = ((df_nonzero_review['api_retrieval_success'].sum()) / num_input_ids_retrievalsent) * 100
-    else:
-        percentage_retrieved = 0
 
     if num_included_articles > 0:
         percentage_retrieved_overall = ((df_nonzero_review['api_retrieval_success'].sum()) / num_included_articles) * 100
@@ -61,11 +61,8 @@ def percentageretrieved_calc(df):
     
 
     return {
-        'num_input_ids_retrievalsent': num_input_ids_retrievalsent,
         'num_included_articles': num_included_articles,
-        'percentage_retrieved': percentage_retrieved,
         'percentage_retrieved_overall': percentage_retrieved_overall,
-        'percentage_retrieved_pri_citations_only': percentage_pri_citations_only
     }
 
 
