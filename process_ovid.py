@@ -79,18 +79,18 @@ def compare_og_results(original_df, result_df):
     best_matches_df = best_matches_df.rename(columns={'index': 'original_index'})
     best_matches_df = best_matches_df[best_matches_df['similarity_score'] >= 90]
 
-    #merge back with original_df 
-    merged_df = best_matches_df.merge(
-        original_df,
-        left_on = 'best_match_index', 
-        right_index = True, 
-        how = 'left', 
-        suffixes = ('', '_secondroundsearch'))
-    
-    merged_df = merged_df.set_index('included_article_id')
-    original_df_indexed = original_df.set_index('included_article_id')
-    original_df_indexed.update(merged_df)
-    
+    # Merge the best matches back with result_df
+    merged_df = pd.merge(best_matches_df, result_df, left_on='best_match_index', right_index=True, how='left')
+
+    # Now merge this result back to the original_df
+    original_df_updated = pd.merge(original_df, merged_df, on='included_article_id', how='left', suffixes=('', '_new'))
+
+    # Update the columns in original_df with the new values where there's a match
+    for col in result_df.columns:
+        if col in original_df_updated.columns:
+            original_df_updated[col] = original_df_updated[col].fillna(original_df_updated[f'{col}_new'])
+            original_df_updated = original_df_updated.drop(columns=[f'{col}_new'])
+
     return original_df_updated
 
 unsuccessful_pubmed_updated = compare_og_results(unsucessful_pubmed, pubmed_second_results_df_interest)
