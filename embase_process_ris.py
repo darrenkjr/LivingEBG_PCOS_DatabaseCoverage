@@ -15,8 +15,7 @@ def clean_doi(doi):
     doi = str(doi).lower().strip()
     return re.sub(r'^https?://(?:dx\.)?doi\.org/', '', doi)
 
-embase_search_dir = 'gdg_embase_searches/search_results/'
-embase_sent_df = pd.read_csv('gdg_embase_searches/embase_ids_sent.csv')
+
 
 # Step 1: Create a function to calculate similarity
 def calculate_similarity(str1, str2):
@@ -89,6 +88,8 @@ def preprocess_text(text):
 
 #main process block
 if __name__ == "__main__" : 
+    embase_search_dir = 'gdg_embase_searches/search_results/'
+    embase_sent_df = pd.read_csv('gdg_embase_searches/embase_ids_sent.csv')
 
     embase_results = pd.DataFrame()
     for file in os.listdir(embase_search_dir):
