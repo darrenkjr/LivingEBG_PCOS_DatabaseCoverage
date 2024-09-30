@@ -79,28 +79,26 @@ def compare_og_results(original_df, result_df):
     best_matches_df = best_matches_df.rename(columns={'index': 'original_index'})
     best_matches_df = best_matches_df[best_matches_df['similarity_score'] >= 90]
 
-    #merge back with original_df 
-    merged_df = best_matches_df.merge(
-        original_df,
-        left_on = 'best_match_index', 
-        right_index = True, 
-        how = 'left', 
-        suffixes = ('', '_secondroundsearch'))
-    
-    merged_df = merged_df.set_index('included_article_id')
-    original_df_indexed = original_df.set_index('included_article_id')
-    original_df_indexed.update(merged_df)
-    
-    return original_df_updated
+#best match index corresponds with the index of result_df that needs to be merged with original_df  
+    result_df_best_match = result_df.loc[best_matches_df['best_match_index']]
+    best_match_df_indexed = best_matches_df.set_index('best_match_index')
+    result_df_best_match['matching_index'] = best_match_df_indexed['original_index']
+    result_df_best_match = result_df_best_match.set_index('matching_index')
 
-unsuccessful_pubmed_updated = compare_og_results(unsucessful_pubmed, pubmed_second_results_df_interest)
-#merge back with og 
-og_pubmed_indexed = og_pubmed.set_index('included_article_id')
-og_pubmed_updated = og_pubmed_indexed.fillna(unsuccessful_pubmed_updated)
-og_pubmed_updated.reset_index() 
-og_pubmed_updated.rename(columns = {
-    'api_id' : 'api_id_retrieved',
-}, inplace = True)
+    
+    #merge back with original_df 
+    updated_df = original_df.combine_first(result_df_best_match)
+
+    #drop duplicates baed on ibcluded_article_id 
+    updated_df.drop_duplicates(subset = 'included_article_id', keep = 'first', inplace = True)
+
+    updated_df_indexed = updated_df.set_index('included_article_id')
+    # original_df_indexed = original_df.set_index('included_article_id')
+    # original_df_indexed.update(merged_df)
+    
+    return updated_df_indexed
+
+
 
 unsuccessful_embase_updated = compare_og_results(unsucessful_embase, emb_second_results_df)
 og_embase_indexed = og_embase.set_index('included_article_id')
