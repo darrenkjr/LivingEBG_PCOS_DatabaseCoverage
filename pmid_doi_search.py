@@ -15,9 +15,8 @@ semanticscholar_api_key =  os.getenv('semantic_scholar_api_key')
 oa_instance = openalex_interface() 
 ss_instance = semanticscholar_interface(semanticscholar_api_key)
 pubmed_instance = async_metapub_wrapper()
-scopus_instance = scopus_interface()
 
-file_path = 'retrieval_results/api_retrieved.xlsx'
+file_path = 'retrieval_results/api_retrieved_pmed.xlsx'
 
 
 with pd.ExcelWriter(file_path, engine='openpyxl') as writer:

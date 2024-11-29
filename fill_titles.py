@@ -4,7 +4,6 @@ from api_interfaces.embase_search_generator import generate_title_search_files
 
 doi_pmid_results_path = 'retrieval_results/api_retrieved.xlsx'
  
-#unsucessful scopus 
 unsucessful_pubmed = pd.read_excel(doi_pmid_results_path, sheet_name='unsucessful_retrieve_pubmed').set_index('included_article_id')
 unsucessful_embase = pd.read_excel(doi_pmid_results_path, sheet_name='unsucessful_retrieve_embase').set_index('included_article_id')
 

@@ -1,7 +1,6 @@
 from api_interfaces.openalex import openalex_interface
 from api_interfaces.semanticscholar import semanticscholar_interface
 from api_interfaces.async_metapub_wrapper import async_metapub_wrapper
-from api_interfaces.scopus import scopus_interface 
 from dotenv import load_dotenv
 load_dotenv() 
 import pandas as pd 
