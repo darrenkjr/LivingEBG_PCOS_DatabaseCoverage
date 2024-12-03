@@ -21,9 +21,6 @@ Thumbs.db
 
 # Project-specific
 *.log
-*.xlsx
-*.xlsm
-*.ris
 _resources
 debug_results/
 manuscript/
