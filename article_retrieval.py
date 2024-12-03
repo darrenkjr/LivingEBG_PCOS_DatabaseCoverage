@@ -69,9 +69,6 @@ def retrieve_ids(df, api_instance):
     df_copy = df.copy() 
     if isinstance(api_instance, async_metapub_wrapper): 
         retrieval_results = asyncio.run(api_instance.async_fetch_pubmed_articles(df_copy, title_search_flag=False))
-    elif isinstance(api_instance, scopus_interface):
-        retrieval_results = asyncio.run(api_instance.retrieve_generic_paper_details(df_copy))
-
     # if not pubmed -> use custom openalex or semantic scholar interfaces 
     else: 
         retrieval_results = asyncio.run(api_instance.retrieve_generic_paper_details(df_copy))
