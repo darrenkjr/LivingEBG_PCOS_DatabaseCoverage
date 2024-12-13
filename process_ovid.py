@@ -61,7 +61,7 @@ emb_second_results_df.rename(
         'doi':'doi_retrieved', 
         'accession_number' : 'api_id_retrieved',
         'primary_title' : 'title_2ndsearch',
-        'abstract' : 'abstract_2ndsearch'
+        'notes_abstract' : 'abstract_2ndsearch'
         }, inplace=True)
 
 # Load PubMed results
