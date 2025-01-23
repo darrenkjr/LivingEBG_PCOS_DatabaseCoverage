@@ -1,7 +1,7 @@
 from article_retrieval import *
 import pandas as pd 
 
-excel_path = '../PCOS_Guideline_Dataset.xlsm'
+excel_path = 'PCOS_Guideline_Dataset.xlsm'
 df = pd.read_excel(excel_path, sheet_name="included_articles", dtype={'included_article_pmid': str})
 #assume that same_study_diff_articles (none = primary_citations)
 df['same_study_diff_article'] = df['same_study_diff_article'].fillna('primary_citation')
@@ -16,7 +16,7 @@ oa_instance = openalex_interface()
 ss_instance = semanticscholar_interface(semanticscholar_api_key)
 pubmed_instance = async_metapub_wrapper()
 
-file_path = 'retrieval_results/api_retrieved_pmed.xlsx'
+file_path = 'retrieval_results/api_retrieved.xlsx'
 
 
 with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
