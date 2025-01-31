@@ -1,5 +1,0 @@
-GDG: 3
-questionid: 3.4
-Total Article Count: 7
-ID Search:
-("26406234".pm OR "33638879".pm OR "30316737".pm OR "32286711".pm OR "31495231".pm OR "35325125".pm OR "18583464".pm) OR ("10 1371 journal pone 0138793".do OR "10 1111 cen 14452".do OR "10 1016 j jsxm 2018 09 002".do OR "10 1111 cen 14194".do OR "10 1177 1359105319869806".do OR "10 1093 humrep deac047".do OR "10 1210 jc 2008 0751".do)

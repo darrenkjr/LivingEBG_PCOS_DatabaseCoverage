@@ -1,0 +1,5 @@
+GDG: 5
+questionid: 5.7.1
+Total Article Count: 7
+ID Search:
+("15755044".pm OR "17462639".pm OR "22569710".pm OR "18802744".pm OR "17347165".pm OR "20008886".pm) OR ("10 1007 s00404 012 2348 9".do OR "10 1007 s10815 008 9249 7".do OR "10 1093 humrep dem033".do OR "10 1093 humrep dep436".do)

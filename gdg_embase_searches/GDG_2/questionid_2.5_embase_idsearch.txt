@@ -1,5 +1,0 @@
-GDG: 2
-questionid: 2.5
-Total Article Count: 14
-ID Search:
-("17397839".pm OR "18672334".pm OR "24602301".pm OR "25743212".pm OR "27825940".pm OR "24844662".pm OR "27513883".pm OR "31615157".pm OR "31056307".pm OR "33304140".pm) OR ("10 1016 j fertnstert 2006 11 039".do OR "10 1016 j psyneuen 2008 06 003".do OR "10 1016 j fertnstert 2013 07 631".do OR "10 1016 j jpag 2013 08 003".do OR "10 1016 j clnu 2015 02 006".do OR "10 1016 j fertnstert 2016 07 750".do OR "10 1016 j appet 2016 11 010".do OR "10 1097 01 jim 0000446834 90599 5d".do OR "10 1016 j psyneuen 2016 08 005".do OR "10 1096 fasebj 31 1_supplement lb374".do OR "10 31083 j ceog4903057".do OR "10 3390 jcm8101682".do OR "10 1016 j fertnstert 2019 03 027".do OR "10 1016 j sjbs 2020 08 039".do)

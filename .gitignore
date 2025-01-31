@@ -25,3 +25,6 @@ _resources
 debug_results/
 manuscript/
 *sync-conflict*
+# pixi environments
+.pixi
+*.egg-info

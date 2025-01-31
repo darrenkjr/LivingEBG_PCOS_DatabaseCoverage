@@ -1,5 +1,0 @@
-GDG: 5
-questionid: 5.6
-Total Article Count: 6
-ID Search:
-("18794162".pm OR "14739186".pm OR "12137881".pm OR "19214545".pm) OR ("10 1093 humrep den325".do OR "10 1136 bmj 328 7433 192".do OR "10 1016 s0015 0282 02 03225 9".do OR "10 1089 gyn 2006 22 105".do OR "10 5005 jp journals 10006 1525".do)

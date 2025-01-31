@@ -1,5 +1,0 @@
-GDG: 2
-questionid: 2.4
-Total Article Count: 9
-ID Search:
-("31395311".pm OR "28360612".pm OR "31630370".pm OR "21436137".pm OR "16769740".pm OR "24602301".pm OR "23981769".pm OR "21911106".pm OR "30398405".pm) OR ("10 1016 j fertnstert 2019 06 018".do OR "10 4274 npa y6778".do OR "10 1007 s11325 019 01946 9".do OR "10 1093 humrep der071".do OR "10 1177 1359105306065021".do OR "10 1016 j jpag 2013 08 003".do OR "10 1111 jsm 12284".do OR "10 1016 j jpsychores 2011 02 005".do OR "10 1080 0167482x 2018 1530210".do)
