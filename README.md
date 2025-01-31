@@ -10,16 +10,14 @@ Requirements:
 * API Keys for PubMed, OpenAlex and Semantic Scholar (if planning on rerunning the experiment)
 
 1. Clone the repository
-2. Install the required packages:
-   ```
-   pip install -r requirements.txt
-   ```
+2. Install pixi (https://docs.pixi.dev/getting-started/installation)
+3. Run `pixi install` to install the dependencies
 
 ### To Check Results and Recreate Figures 
 
-1. Check retrieval_results/api_retrieved_final.xlsx for top line results. Tabs with XX_metrics provide results for each database
-2. Consult analysis/all_unsuccessful_nodupe_rob_FIXED.csv for list of articles that were unsucessfully retrieved (with ROB scores)
-3. Run analysis/analysis.ipynb to regenerate api_retrieved_final.xlsx and all_unsuccessful_nodupe_rob_FIXED.csv and recreate figures (overlap between databasesa and ROB sensitivity analysis) 
+1. Check src/retrieval_results/api_retrieved_final.xlsx for top line results. Tabs with XX_metrics provide results for each database
+2. Consult src/analysis/all_unsuccessful_nodupe_rob_FIXED.csv for list of articles that were unsucessfully retrieved (with ROB scores)
+3. Run src/analysis/analysis.ipynb to regenerate api_retrieved_final.xlsx and all_unsuccessful_nodupe_rob_FIXED.csv and recreate figures (overlap between databasesa and ROB sensitivity analysis) 
 
 
 
