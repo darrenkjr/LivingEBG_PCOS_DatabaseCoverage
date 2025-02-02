@@ -25,5 +25,5 @@ Requirements:
 
 
 1. Set up your API keys in a .env file (see .env.example for required keys)
-2. Run main.py 
-3. Run analysis/analysis.ipynb
+2. Run src/main.py 
+3. Run src/analysis/analysis.ipynb
