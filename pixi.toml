@@ -19,7 +19,10 @@ aiohttp = ">=3.11.11,<4"
 aiolimiter = ">=1.2.1,<2"
 python-dotenv = ">=1.0.1,<2"
 fuzzywuzzy = ">=0.18.0,<0.19"
+rapidfuzz = ">=3.12.1,<4"
+openpyxl = ">=3.1.5,<4"
 
 [pypi-dependencies]
-metapub = ">=0.5.12, <0.6"
 rispy = ">=0.9.0, <0.10"
+metapub = ">=0.5.12, <0.6"
+python-levenshtein = "*"
