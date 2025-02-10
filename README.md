@@ -1,6 +1,6 @@
 # Assessing the Coverage of PubMed, Embase, OpenAlex and Semantic Scholar for Automated Single Database Searches in Living Guideline Evidence Surveillance : A Case Study of the International PCOS Guidelines 2023
 
-This project is designed to retrieve and process scientific article data from various APIs including OpenAlex, Semantic Scholar, and PubMed. The data and code allows replication of our automated retrieval and analyses as part of our paper: "Assessing the Coverage of PubMed, Embase, OpenAlex and Semantic Scholar for Automated Single Database Searches in Living Guideline Evidence Surveillance : A Case Study of the International PCOS Guidelines 2023"
+This project is designed to retrieve and process scientific article data from various APIs including OpenAlex, Semantic Scholar, and PubMed. The data and code allows replication of our automated retrieval and analyses as part of our paper: "Assessing the Coverage of PubMed, Embase, OpenAlex and Semantic Scholar for Automated Single Database Searches in Living Guideline Evidence Surveillance : A Case Study of the International PCOS Guidelines 2023, Currently under review" 
 
 
 ## Installation
