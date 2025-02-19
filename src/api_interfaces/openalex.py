@@ -9,6 +9,7 @@ from numpy import nan
 import logging 
 from collections import OrderedDict
 import numpy as np
+import hashlib
 
 class openalex_interface: 
 
@@ -29,6 +30,7 @@ class openalex_interface:
         self.logger = logging.getLogger(__name__)
         if platform.system()=='Windows':
                 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        self.apikey = hashlib.md5('darren.rajit1@monash.edu'.encode()).hexdigest()
 
     def chunk_id_list(self,id_list): 
         '''OpenAlex has a limit of 50 ids per request, which can be concatenated together with the pipe operator.
@@ -317,7 +319,8 @@ class openalex_interface:
             async with self.api_limit: 
                 async with aiohttp.ClientSession() as session:
                     print('Sending request')
-                    async with session.get(api_path, headers={"mailto":"darren.rajit1@monash.edu"}) as resp: 
+                    
+                    async with session.get(api_path, headers={"apikey":self.apikey}) as resp: 
                         if resp.status != 200: 
                             self.logger.error('Inappropriate response received for path: {}, {}. {}'.format(api_path, resp.status, resp.reason))
                             print('Error from API Call')
@@ -366,7 +369,8 @@ class openalex_interface:
                                             cursor = resp_meta['next_cursor']
                                             api_path = re.sub(r"(?<=cursor\=).*$",cursor, api_path)
                                             # self.logger.info('Pagination API path:', str(api_path))
-                                            async with session.get(api_path, headers={"mailto":"darren.rajit1@monash.edu"}) as pagination_resp: 
+
+                                            async with session.get(api_path, headers={"apikey":self.apikey}) as pagination_resp: 
                                                 if pagination_resp.status == 200: 
                                                     self.logger.info('Pagination Response received for path: {}'.format(api_path))
                                                     pagination_content = await pagination_resp.json()

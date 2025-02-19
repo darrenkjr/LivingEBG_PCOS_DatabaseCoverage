@@ -15,7 +15,7 @@ class async_metapub_wrapper:
     def __init__(self): 
         self.api_instance = PubMedFetcher()
         #api limits are set at rps 
-        self.api_limit = 3
+        self.api_limit = 2
         self.pubmed_result_col = ['api_id_retrieved', 'title', 'abstract', 'publication_year', 'venue', 'doi', 'mesh_headings', 'authors', 'url', 'pmid']
         self.none_result_placeholder = (None,)*len(self.pubmed_result_col)
 

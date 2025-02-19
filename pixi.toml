@@ -1,5 +1,5 @@
 [project]
-authors = ["darrenkjr <darren.rajit@gmail.com>"]
+authors = ["darrenkjr <darren.rajit1@monash.edu>"]
 channels = ["conda-forge"]
 description = "Add a short description here"
 name = "evidence_retrieval"
